@@ -1,1 +1,7 @@
-# sdb-homeworks
+# Домашние задания по курсу «Базы данных и информационная безопасность»
+
+---
+
+## Модуль 11. Системы хранения и передачи данных
+
+ [Кеширование Redis/memcached] (https://github.com/AstaKrom/sdb-homeworks/blob/main/2)
