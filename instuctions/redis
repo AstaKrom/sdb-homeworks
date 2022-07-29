@@ -1,0 +1,67 @@
+# Установка memcached
+sudo update & sudo apt install memcached -y
+
+# Убеждаемся, что база запустилась:
+sudo systemctl status memcached
+
+# Если клиентом memcached будет не localhost, то переопределяем IPадрес, который слушает база в конфиге /etc/memcached.conf: 
+# Specify which IP address to listen on. The default is to listen on all IP addresses
+# This parameter is one of the only security measures that memcached has, so make sure
+# it's listening on a firewalled interface. -l 127.0.0.1
+sudo nano /etc/memcached.conf
+
+# Интерфейс управления — это порт, например, добавление ключа с ttl 5 секунд:
+telnet localhost 11211
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+# add key - добавить ключ
+# 0 - без флага
+# 5 - размер TTL
+# 5 - размер значения в байтах. Обязательно должно совпадать с водимым данным, иначе будет ошибка.
+# Например размер вводимого значения "value" = 5
+add key 0 5 5
+value
+STORED
+# Вызвать ключ
+get key
+# Возвращает в ответ ключ, что он без флага и размером 5 
+VALUE key 0 5
+value
+END
+
+
+# Установка redis
+sudo apt install redis -y
+
+# Убеждаемся, что база запустилась:
+sudo systemctl status redis
+
+# Идем в redis-cli после установки:
+redis-cli
+127.0.0.1:6379> INFO
+Server
+redis_version:5.0.3
+
+# Добавить ключ "testing" со сроком жизни 5 сек
+redis-cli
+127.0.0.1:6379> set key testing ex 5
+OK
+127.0.0.1:6379> get key
+"testing"       
+127.0.0.1:6379> get key
+(nil)
+
+# Увеличение ключа
+redis-cli
+127.0.0.1:6379> set key5 5
+OK
+127.0.0.1:6379> get key5
+"5"
+# команда INCR увеличивает только на одно значение.
+# команда INCRBY увеличивает на определенное число
+127.0.0.1:6379> INCRBY key5 5
+(integer) 10    
+127.0.0.1:6379> get key5
+"10"
+127.0.0.1:6379> 
