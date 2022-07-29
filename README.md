@@ -4,4 +4,4 @@
 
 ## Модуль 11. Системы хранения и передачи данных
 
- [Кеширование Redis/memcached] (https://github.com/AstaKrom/sdb-homeworks/blob/main/2)
+ 2. [Кеширование Redis/memcached](https://github.com/AstaKrom/sdb-homeworks/blob/main/2)
