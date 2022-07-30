@@ -1,0 +1,96 @@
+# Документация по MySQL
+https://dev.mysql.com/doc/refman/8.0/en/linux-installation-yum-repo.html
+
+# Устанавливаем wget и nano
+sudo yum install wget nano -y
+
+# Скачиваем prm пакет MySQL
+wget https://dev.mysql.com/get/mysql80-community-release-el7-6.noarch.rpm
+
+# Устанавливаем скаченный пакет
+sudo rpm -Uvh mysql80-community-release-el7-6.noarch.rpm
+
+# Добавляем новый GPG ключ
+sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+
+# 5. Устанавливаем сервер и клиент MySQL
+sudo yum install -y mysql-server mysql-client
+
+# Правим конфиг до старта
+# комментим сроку socket=/var/lib/mysql/mysql.sock
+# добавляем bind-address=0.0.0.0
+sudo nano /etc/my.cnf
+
+# стартуем
+sudo systemctl start mysqld
+
+# открываем лог для того чтобы посмотреть временный пароль
+# ищем строку - A temporary password is generated for root@localhost:
+sudo less /var/log/mysqld.log
+
+# авторизуемся используя временный пароль. На каждом сервере свой временный пароль.
+
+# Создаем новый пароль
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'Свой сложный пароль';
+
+# Добавляем в файл конфига возможность репликации
+sudo nano /etc/my.cnf
+# на каждом сервере свой номер id
+server-id=1 
+log_bin=/var/log/mysql/mybin.log
+
+# Создаем папку для логов
+sudo mkdir -p /var/log/mysql
+
+# Даем права для mysql в папку с логами
+sudo chown mysql: /var/log/mysql
+
+# перезапускаем службу
+sudo systemctl restart mysqld
+
+# авторизуемся и проверяем базы
+sudo mysql -p
+show databases;
+
+# создаем пользователя для репликации, только на master
+CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY '!Pa$$w0rd';
+
+# дать этому пользователю права на репликацию, только на master
+GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
+
+# Сделать сброс привелегий чтобы обновились, только на master
+FLUSH PRIVILEGES;
+
+# для того чтобы SLAVE ходил и читал данные с MASTER
+# на MASTER запускаем команду чтобы увидеть имя LOG файла и его позицию
+show master status;
+# команда на SLAVE
+CHANGE MASTER TO MASTER_HOST='192.168.56.15',MASTER_USER='repl',MASTER_PASSWORD='!Pa$$w0rd',MASTER_LOG_FILE='mybin.000001',MASTER_LOG_POS=827;
+
+# запускаем SLAVE
+start slave;
+
+# смотрим его статус. должно быть без ошибок
+show slave status\G
+
+# создаем на MASTER базу и она дожна реплецироваться на SLAVE
+create database test01;
+
+# для настройки репликации MASTER-MASTER
+# на втором сервере
+# создаем пользователя для репликации
+CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY '!Pa$$w0rd';
+# дать этому пользователю права на репликацию
+GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
+# Сделать сброс привелегий чтобы обновились
+FLUSH PRIVILEGES;
+STOP SLAVE;
+CHANGE MASTER TO MASTER_HOST='192.168.56.15',MASTER_USER='repl',MASTER_PASSWORD='!Pa$$w0rd',MASTER_LOG_FILE='mybin.000001',MASTER_LOG_POS=1405;
+START SLAVE;
+
+# на втором запускаем команду чтобы увидеть имя LOG файла и его позицию
+show master status;
+# на первом сервере
+STOP SLAVE;
+CHANGE MASTER TO MASTER_HOST='192.168.56.16',MASTER_USER='repl',MASTER_PASSWORD='!Pa$$w0rd',MASTER_LOG_FILE='mybin.000001',MASTER_LOG_POS=1405;
+START SLAVE;
