@@ -29,6 +29,7 @@ sudo systemctl start mysqld
 sudo less /var/log/mysqld.log
 
 # авторизуемся используя временный пароль. На каждом сервере свой временный пароль.
+sudo mysql -p
 
 # Создаем новый пароль
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'Свой сложный пароль';
