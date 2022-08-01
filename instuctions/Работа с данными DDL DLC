@@ -1,0 +1,64 @@
+# Подготовка базы
+
+# Устанавливаем wget и nano
+sudo yum install wget nano -y
+
+# Скачиваем prm пакет MySQL
+wget https://dev.mysql.com/get/mysql80-community-release-el7-6.noarch.rpm
+
+# Устанавливаем скаченный пакет
+sudo rpm -Uvh mysql80-community-release-el7-6.noarch.rpm
+
+# Добавляем новый GPG ключ
+sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+
+# 5. Устанавливаем сервер и клиент MySQL
+sudo yum install -y mysql-server mysql-client
+
+# Правим конфиг до старта
+# комментим сроку socket=/var/lib/mysql/mysql.sock
+# добавляем bind-address=0.0.0.0
+sudo nano /etc/my.cnf
+
+# стартуем
+sudo systemctl start mysqld
+
+# открываем лог для того чтобы посмотреть временный пароль
+# ищем строку - A temporary password is generated for root@localhost:
+sudo less /var/log/mysqld.log
+
+# авторизуемся используя временный пароль. На каждом сервере свой временный пароль.
+sudo mysql -p
+
+# Создаем новый пароль
+ALTER USER 'root'@'localhost' IDENTIFIED BY '!Pa$$w0rd';
+# даем права
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+
+# создаем пользователя для удаленного подключения и даем ему права
+CREATE USER 'root'@'%' IDENTIFIED BY '!Pa$$w0rd';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+
+# проверяем базы
+show databases;
+
+# Команды ДЗ
+sudo mysql -p
+CREATE USER 'sys_temp'@'localhost' IDENTIFIED BY '!Pa$$w0rd';
+SELECT User, Host FROM mysql.user;
+GRANT ALL PRIVILEGES ON *.* TO 'sys_temp'@'localhost' WITH GRANT OPTION;
+SHOW GRANTS FOR 'sys_temp'@'localhost';
+ALTER USER 'sys_temp'@'localhost' IDENTIFIED WITH mysql_native_password BY '!Pa$$w0rd';
+sudo mysql -u sys_temp -p
+wget https://downloads.mysql.com/docs/sakila-db.zip
+unzip sakila-db.zip
+sudo mysql -u root -p  sakila < sakila-db/sakila-schema.sql
+sudo mysql -u root -p  sakila < sakila-db/sakila-data.sql
+show tables from sakila;
+
+SELECT DISTINCT TABLE_NAME ,column_name
+    FROM INFORMATION_SCHEMA.key_column_usage
+    WHERE TABLE_SCHEMA IN ('sakila');
+
+REVOKE INSERT, DELETE, UPDATE ON `sakila`.* FROM `sys_temp`@`localhost`;
+SHOW GRANTS FOR 'sys_temp'@'localhost';
