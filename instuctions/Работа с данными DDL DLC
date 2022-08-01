@@ -1,7 +1,7 @@
 # Подготовка базы
 
-# Устанавливаем wget и nano
-sudo yum install wget nano -y
+# Устанавливаем wget, nano и unzip
+sudo yum install wget nano unzip -y
 
 # Скачиваем prm пакет MySQL
 wget https://dev.mysql.com/get/mysql80-community-release-el7-6.noarch.rpm
