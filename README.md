@@ -13,3 +13,5 @@
 2.3. [Реляционные базы данных: SQL. Часть 1](https://github.com/AstaKrom/sdb-homeworks/blob/main/2.3.md)
 
 2.6. [Репликация и масштабирование. Часть 1](https://github.com/AstaKrom/sdb-homeworks/blob/main/2-6.md)
+
+2.8. [Резервное копирование баз данных](https://github.com/AstaKrom/sdb-homeworks/blob/main/2.8.md)
