@@ -1,0 +1,57 @@
+# Устанавливаем зону Москва
+sudo timedatectl set-timezone Europe/Moscow
+
+# команды для заданя "Защита хоста"
+
+# Задание 1.
+
+# Устанаваливаем eCryptfs
+sudo apt install ecryptfs-utils -y
+# загружаем модуль
+sudo modprobe ecryptfs
+
+# Создаем пользователя cryptouser
+sudo adduser cryptouser
+# Переключаемся на нового пользователя
+su - cryptouser
+# показываем домашний каталог пользователя
+ls -al
+
+# зашифровываем домашний каталог пользователя cryptouser
+> sudo ecryptfs-migrate-home -u cryptouser
+# переключаемся на пользователя cryptouser
+# показываем домашний каталог пользователя после зашифрования
+ls -al
+
+
+# Задание 2.
+
+# Подготовка диска:
+sudo apt install gparted -y
+# Установка LUKS (установливаем по умолчанию)
+sudo apt-get install cryptsetup -y
+# Проверка установки
+sudo cryptsetup --version
+
+# добавляем второй диск к виртуалке и монтируем его в систему
+sudo  lsblk -a
+sudo fdisk /dev/sdb
+n
+p
+w
+
+# Подготовка раздела (luksFormat)
+sudo cryptsetup -y -v --type luks2 luksFormat /dev/sdb1
+# Монтирование раздела
+sudo cryptsetup luksOpen /dev/sdb1 disk
+ls /dev/mapper/disk
+# Форматирование раздела
+sudo dd if=/dev/zero of=/dev/mapper/disk
+sudo mkfs.ext4 /dev/mapper/disk
+# Шифрование раздела LUKS
+# Монтирование «открытого» раздела
+mkdir .secret
+sudo mount /dev/mapper/disk .secret/
+# Завершение работы
+sudo umount .secret
+sudo cryptsetup luksClose disk
