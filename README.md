@@ -21,3 +21,5 @@
 2.8. [Резервное копирование баз данных](https://github.com/AstaKrom/sdb-homeworks/blob/main/2.8.md)
 
 ## Модуль «Информационная безопасность»
+
+3.2 [Защита хоста](https://github.com/AstaKrom/sdb-homeworks/blob/main/3.2.md)
