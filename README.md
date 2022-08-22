@@ -22,4 +22,6 @@
 
 ## Модуль «Информационная безопасность»
 
+3.1. [Уязвимости и атаки на информационные системы](https://github.com/AstaKrom/sdb-homeworks/blob/main/3.1.md)
+
 3.2 [Защита хоста](https://github.com/AstaKrom/sdb-homeworks/blob/main/3.2.md)
