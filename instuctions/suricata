@@ -1,0 +1,31 @@
+# Устанавливаем зону Москва
+sudo timedatectl set-timezone Europe/Moscow
+
+# Устанавливаем Сурикату
+sudo apt install suricata -y
+
+# Устанавливаем модуль обновления правил Сурикаты
+sudo apt install python-pip
+sudo pip install --pre --upgrade suricata-update
+
+# Обновляем правила Сурикты.
+# Но перед обновленем надо остановить сервис
+sudo systemctl stop suricata
+sudo suricata-update -o /etc/suricata/rules
+
+# В конфиг файле меняем значение параметра EXTERNAL_NET на "any"
+# раскоментировать /etc/suricata/rules/suricata.rules
+# все остальные закоментировать/удалить
+sudo nano /etc/suricata/suricata.yml
+
+# Запускаем сервис
+sudo systemctl start suricata
+
+# Проверяем его статус
+sudo systemctl status suricata
+
+# Запуск Сурикты
+sudo suricata -c /etc/suricata/suricata.yaml -i eth1
+
+# Просмотр логов
+sudo tail -f /var/log/suricata/fast.log
