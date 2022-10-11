@@ -4,9 +4,11 @@
 
 ## Модуль «Системы хранения и передачи данных»
 
- 1.2. [Кеширование Redis/memcached](https://github.com/AstaKrom/sdb-homeworks/blob/main/1-2.md)
+1.1. [Базы данных, их типы](https://github.com/AstaKrom/sdb-homeworks/blob/main/1-1.md)
+
+1.2. [Кеширование Redis/memcached](https://github.com/AstaKrom/sdb-homeworks/blob/main/1-2.md)
  
- 1.3. [ELK](https://github.com/AstaKrom/sdb-homeworks/blob/main/1.3.md)
+1.3. [ELK](https://github.com/AstaKrom/sdb-homeworks/blob/main/1.3.md)
  
 
 ## Модуль «Реляционные базы данных»
